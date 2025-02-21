@@ -3,6 +3,7 @@ from config_reader import config
 import random
 
 API_KEY = config.api_key.get_secret_value()
+BASE_URL = "https://api.imeicheck.net"
 
 
 def validate_imei(imei: str) -> bool:
@@ -16,7 +17,7 @@ async def get_service(token: str):
     try:
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {token}"}
-            async with session.get("https://api.imeicheck.net/v1/services", headers=headers) as response:
+            async with session.get(f"{BASE_URL}/v1/services", headers=headers) as response:
                 data = await response.json()
                 ids = [item["id"] for item in data if "id" in item]
                 return random.choice(ids)
@@ -31,7 +32,7 @@ async def get_imei_info(imei: str, token: str):
             headers = {"Authorization": f"Bearer {token}"}
             payload = {"deviceId": imei, "serviceId": service_id}
 
-            async with session.post("https://api.imeicheck.net/v1/checks/",
+            async with session.post(f"{BASE_URL}/v1/checks/",
                                     headers=headers, json=payload) as response:
                 return await response.json()
     except aiohttp.ClientError as e:

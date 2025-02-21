@@ -19,7 +19,7 @@ async def check(request: Request):
             raise HTTPException(status_code=400, detail="Недостаточно данных в запросе")
 
         if not validate_imei(data["deviceId"]):
-            raise HTTPException(status_code=422, detail="Некорректный IMEI")
+            raise HTTPException(status_code=400, detail="Некорректный IMEI")
 
         return await get_imei_info(data["deviceId"], data["token"])
 

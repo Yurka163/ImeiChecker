@@ -1,20 +1,16 @@
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
 from aiogram.types import Message
 from imei import validate_imei, get_imei_info
-
 from config_reader import config
+from midlleware import AccessMiddleware
 
 bot = Bot(token=config.bot_token.get_secret_value(),
-          default=DefaultBotProperties(
-              parse_mode=ParseMode.HTML
-
-          )
-          )
+          default=DefaultBotProperties())
 
 dp = Dispatcher()
+dp.update.middleware(AccessMiddleware())
 
 
 @dp.message(Command("start"))
@@ -46,4 +42,3 @@ async def imei(message: Message):
 async def start_bot():
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
-
